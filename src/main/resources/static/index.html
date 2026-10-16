@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>My Tasks · Task Manager</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">UI</div>
+    <nav aria-label="Main navigation">
+      <button class="nav-item active" title="Tasks" aria-label="Tasks"><span>⌂</span></button>
+      <button class="nav-item" title="Analytics" aria-label="Analytics"><span>▥</span></button>
+      <button class="nav-item" title="Reports" aria-label="Reports"><span>◷</span></button>
+      <button class="nav-item" title="Projects" aria-label="Projects"><span>▱</span></button>
+      <button class="nav-item" title="Focus mode" aria-label="Focus mode"><span>☾</span></button>
+      <button class="nav-item" title="Settings" aria-label="Settings"><span>⚙</span></button>
+    </nav>
+    <div class="sidebar-bottom">TM</div>
+  </aside>
+
+  <main class="app">
+    <header class="topbar">
+      <div class="mobile-brand">UI</div>
+      <div class="top-actions">
+        <button class="icon-button" id="focusSearch" aria-label="Focus search">⌕</button>
+        <button class="icon-button" id="notifyButton" aria-label="Notifications">♧</button>
+        <div class="avatar" aria-label="User profile">A</div>
+      </div>
+    </header>
+
+    <section class="page-heading">
+      <div>
+        <h1>My Tasks</h1>
+        <p class="subtitle">Plan your day. Get things done.</p>
+      </div>
+      <div class="summary-pills">
+        <span id="totalCount">0 tasks</span>
+        <span id="pendingCount">0 pending</span>
+      </div>
+    </section>
+
+    <div class="tabs" role="tablist" aria-label="Task status filter">
+      <button class="tab" data-status="All" role="tab">Assigned Tasks</button>
+      <button class="tab selected" data-status="Pending" role="tab">Accepted Tasks</button>
+      <button class="tab" data-status="Completed" role="tab">Review Tasks</button>
+    </div>
+
+    <section class="toolbar">
+      <div class="filter-area">
+        <div class="filters">
+          <label class="date-field"><span aria-hidden="true">▦</span><input id="deadlineFilter" type="date" aria-label="Filter by due date"></label>
+          <label class="status-select-wrap"><select id="statusFilter" aria-label="Choose status"><option value="All">All statuses</option><option value="Pending" selected>Pending</option><option value="Completed">Completed</option></select></label>
+          <button class="button button-lilac" id="filterButton">Filter</button>
+          <button class="button button-quiet advanced-toggle" id="advancedToggle" aria-expanded="false">More filters <span>⌄</span></button>
+        </div>
+        <div class="advanced-filters" id="advancedFilters" hidden>
+          <label class="search-field"><span aria-hidden="true">⌕</span><input id="searchInput" type="search" placeholder="Search tasks..." aria-label="Search tasks"></label>
+          <select id="priorityFilter" aria-label="Filter by priority"><option value="All">All priorities</option><option>Low</option><option>Medium</option><option>High</option></select>
+          <label class="overdue-toggle"><input type="checkbox" id="overdueOnly"> Overdue only</label>
+          <button class="button button-quiet" id="clearFilters">Clear filters</button>
+        </div>
+      </div>
+      <button class="button button-primary" id="createButton"><span class="plus">＋</span> Create New Task</button>
+    </section>
+
+    <div id="alert" class="alert" role="alert" hidden></div>
+
+    <section class="table-wrap" aria-label="Task list">
+      <table>
+        <thead><tr>
+          <th class="title-col">Title</th><th>Priority</th><th>Status</th><th>Created by</th><th>Date Assigned</th><th>Due Date</th><th aria-label="Actions"></th>
+        </tr></thead>
+        <tbody id="taskRows"><tr><td colspan="7" class="loading">Loading tasks…</td></tr></tbody>
+      </table>
+      <div class="empty-state" id="emptyState" hidden>
+        <div class="empty-icon">✓</div><h2>No tasks found</h2><p>Create a task or adjust your filters.</p>
+        <button class="button button-lilac" id="emptyCreateButton">Create a task</button>
+      </div>
+    </section>
+
+    <footer class="pagination">
+      <label>Rows per page:
+        <select id="pageSize"><option>5</option><option selected>10</option><option>25</option><option>50</option></select>
+      </label>
+      <span id="pageSummary">0–0 of 0</span>
+      <button class="page-arrow" id="prevPage" aria-label="Previous page" disabled>‹</button>
+      <button class="page-arrow" id="nextPage" aria-label="Next page" disabled>›</button>
+    </footer>
+    <p class="footer-note">Your tasks are saved locally in the SQLite database.</p>
+  </main>
+
+  <dialog id="taskDialog">
+    <form id="taskForm">
+      <div class="dialog-heading"><div><p class="eyebrow" id="dialogEyebrow">TASK DETAILS</p><h2 id="dialogTitle">Create new task</h2></div><button type="button" class="close-button" id="closeDialog" aria-label="Close">×</button></div>
+      <input type="hidden" id="taskId">
+      <label class="form-label">Task title <span class="required">*</span>
+        <input id="titleInput" name="title" maxlength="160" required placeholder="e.g. Prepare project presentation">
+      </label>
+      <label class="form-label">Description
+        <textarea id="descriptionInput" name="description" maxlength="4000" rows="4" placeholder="Add details or notes..."></textarea>
+      </label>
+      <div class="form-grid">
+        <label class="form-label">Deadline
+          <input id="deadlineInput" type="date">
+        </label>
+        <label class="form-label">Priority
+          <select id="priorityInput"><option>Low</option><option selected>Medium</option><option>High</option></select>
+        </label>
+        <label class="form-label">Status
+          <select id="statusInput"><option>Pending</option><option>Completed</option></select>
+        </label>
+      </div>
+      <p id="formError" class="form-error" role="alert" hidden></p>
+      <div class="dialog-actions"><button type="button" class="button button-quiet" id="cancelDialog">Cancel</button><button class="button button-primary" id="saveButton" type="submit">Save task</button></div>
+    </form>
+  </dialog>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="/app.js" defer></script>
+</body>
+</html>
